@@ -58,7 +58,7 @@ void render() {
 }
 
 void pause(const char* msg) {
-	std::cout << msg << "\nPress any key to continue . . ."; getchar();
+	std::cout << msg << "\nPress enter to continue . . ."; getchar();
 	exit(EXIT_FAILURE);
 }
 
