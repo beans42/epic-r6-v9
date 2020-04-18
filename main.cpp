@@ -2,10 +2,9 @@
 #include "memory.hpp"
 #include "game.hpp"
 #include "renderer.hpp"
-#include <vector>
 
 //defining globals
-const unsigned int g_screen_width = GetSystemMetrics(SM_CXSCREEN);
+const unsigned int g_screen_width  = GetSystemMetrics(SM_CXSCREEN);
 const unsigned int g_screen_height = GetSystemMetrics(SM_CYSCREEN);
 
 HWND g_hwnd, g_game_hwnd;
@@ -23,20 +22,32 @@ IDirect3DDevice9* g_d3dev;
 ID3DXFont* g_d3Font;
 ID3DXLine* g_d3Line;
 
+std::vector<entity_t> ents;
+
+void populate_entity_vector() {
+	struct entity_list_t { uintptr_t ent_ptrs[31]; } entity_list;
+	std::vector<entity_t> buffer;
+
+	while (1) {
+		entity_list = RPM<entity_list_t>(g_entity_list + 1 * OFFSET_GAMEMANAGER_ENTITY);
+		buffer.clear();
+
+		for (uintptr_t ent_ptr : entity_list.ent_ptrs) {
+			entity_t ent;
+			ent.m_ptr = ent_ptr;
+			ent.set_all(); if (ent.m_health < 1 || ent.m_health > 100) continue;
+
+			buffer.push_back(ent);
+		}
+		
+		ents = buffer;
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+	}
+}
+
 void render() {
 	g_d3dev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_ARGB(0, 0, 0, 0), 1.0f, 0);
 	g_d3dev->BeginScene();
-
-
-	std::vector<entity_t> ents;
-	for (int i = 1; i < 32; i++) {
-		entity_t buffer;
-		buffer.m_ptr = RPM<uintptr_t>(g_entity_list + i * OFFSET_GAMEMANAGER_ENTITY); if (!buffer.m_ptr) continue;
-		buffer.set_all();
-		if (buffer.m_health < 1 || buffer.m_health > 100) continue;
-
-		ents.push_back(buffer);
-	}
 
 	g_vm.update();
 
@@ -49,7 +60,7 @@ void render() {
 		float box_width = box_height / 2.4;
 		
 		draw_outlined_rect(box_top.x - box_width / 2, box_top.y, box_width, box_height, epic_blue);
-		draw_healthbars(box_top.x - box_width / 2 - 8, box_top.y, 2, box_height, ent.m_health, 100, epic_blue);
+		draw_healthbars(box_top.x - box_width / 2 - 6, box_top.y, 2, box_height, ent.m_health, 100, epic_blue);
 		draw_circle(head_position.x, head_position.y, box_height / 12.5f, 60, epic_blue);
 	}
 
@@ -91,6 +102,7 @@ int main() {
 		resolve_pointers();
 
 		std::cout << "[+] Started reading thread, starting rendering" << std::endl;
+		std::thread populate_entity_vector_thread(populate_entity_vector);
 		loop();
 	} else { pause("[+] Game must be running to continue"); }
 }
