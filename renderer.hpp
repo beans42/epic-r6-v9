@@ -96,8 +96,10 @@ void setup_window() {
 
 //drawing functions
 constexpr double M_PI = 3.141592653589793116;
-constexpr D3DCOLOR epic_blue = D3DCOLOR_RGBA(0x41, 0x87, 0xF5, 0xFF);
+constexpr double RAD_TO_DEG = 180.f / M_PI;
+constexpr double DEG_TO_RAD = M_PI / 180.f;
 
+constexpr D3DCOLOR epic_blue = D3DCOLOR_RGBA(0x41, 0x87, 0xF5, 0xFF);
 constexpr D3DCOLOR red       = D3DCOLOR_RGBA(0xFF, 0x00, 0x00, 0xFF);
 constexpr D3DCOLOR green     = D3DCOLOR_RGBA(0x00, 0xFF, 0x00, 0xFF);
 constexpr D3DCOLOR blue      = D3DCOLOR_RGBA(0x00, 0x00, 0xFF, 0xFF);
