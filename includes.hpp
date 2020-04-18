@@ -1,5 +1,8 @@
 #pragma once
 #include <iostream>
+#include <thread>
+#include <vector>
+
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <dwmapi.h>
