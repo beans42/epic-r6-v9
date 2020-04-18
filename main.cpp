@@ -59,7 +59,7 @@ void populate_entity_vector() {
 	std::vector<entity_t> buffer;
 
 	while (1) {
-		entity_list = RPM<decltype(entity_list)>(g_entity_list + 1 * OFFSET_GAMEMANAGER_ENTITY);
+		entity_list = RPM<entity_list_t>(g_entity_list + 1 * OFFSET_GAMEMANAGER_ENTITY);
 		buffer.clear();
 
 		for (uintptr_t ent_ptr : entity_list.ent_ptrs) {
